@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Mint In-Progress Site</title>
+  <title>Mint Sudoku Extreme 9x9</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
     :root {
-      --mint: #10a37f;           /* mint accent (ChatGPT-style) */
+      --mint: #10a37f;
       --radius-lg: 16px;
       --radius-pill: 999px;
       --transition-fast: 0.18s ease-out;
@@ -23,7 +23,7 @@
     }
 
     body.dark {
-      /* Dark theme (ChatGPT-ish) */
+      /* Dark theme angelehnt an ChatGPT */
       --bg: #202123;
       --bg-elevated: #2b2c2f;
       --bg-subtle: #18191c;
@@ -56,7 +56,7 @@
 
     .shell {
       width: 100%;
-      max-width: 960px;
+      max-width: 1100px;
       background: linear-gradient(
         135deg,
         rgba(16, 163, 127, 0.12),
@@ -116,7 +116,7 @@
       color: var(--text-soft);
     }
 
-    /* Dark mode toggle button */
+    /* Dark mode toggle */
     .theme-toggle {
       border-radius: var(--radius-pill);
       border: 1px solid rgba(148, 163, 184, 0.4);
@@ -173,29 +173,38 @@
       border-color: rgba(148, 163, 184, 0.6);
     }
 
-    /* Main content */
     main {
       flex: 1;
       display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 18px;
+      margin-top: 6px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       main {
         grid-template-columns: minmax(0, 1fr);
       }
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .right {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .hero {
       background: radial-gradient(circle at top left, rgba(16, 163, 127, 0.16), transparent),
         var(--bg-elevated);
       border-radius: var(--radius-lg);
-      padding: 18px 18px 16px;
+      padding: 18px 18px 14px;
       border: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
 
     .hero-label {
@@ -213,7 +222,7 @@
     }
 
     .hero-title {
-      font-size: clamp(24px, 3vw, 30px);
+      font-size: clamp(22px, 3vw, 28px);
       line-height: 1.15;
       margin-top: 12px;
       margin-bottom: 8px;
@@ -222,59 +231,170 @@
     .hero-subtitle {
       font-size: 13px;
       color: var(--text-soft);
-      max-width: 32rem;
     }
 
-    .hero-footer {
-      margin-top: 18px;
+    .hero-meta {
+      margin-top: 12px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
       font-size: 11px;
       color: var(--text-soft);
     }
 
-    .hero-dot {
+    .hero-meta-pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: var(--bg-subtle);
+    }
+
+    /* Sudoku Board */
+    .board-wrapper {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .status-dot {
       width: 7px;
       height: 7px;
       border-radius: 999px;
       background: var(--mint);
-      box-shadow: 0 0 0 6px rgba(16, 163, 127, 0.25);
+      box-shadow: 0 0 0 5px rgba(16, 163, 127, 0.2);
     }
 
-    .hero-progress {
+    .timer {
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 0;
+      border: 2px solid rgba(148, 163, 184, 0.6);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--bg-elevated);
+    }
+
+    .cell {
+      width: 100%;
+      padding-bottom: 100%; /* square */
+      position: relative;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* stärkere Linien für 3x3 Blöcke */
+    .cell[data-bottom-block="true"] {
+      border-bottom-width: 2px;
+    }
+    .cell[data-right-block="true"] {
+      border-right-width: 2px;
+    }
+
+    .cell-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-size: calc(1.2vw + 12px);
+      font-weight: 500;
+      color: var(--text);
+      outline: none;
+      caret-color: var(--mint);
+    }
+
+    @media (max-width: 900px) {
+      .cell-input {
+        font-size: 20px;
+      }
+    }
+
+    .cell-input:focus {
+      background: rgba(16, 163, 127, 0.1);
+    }
+
+    .cell.fixed .cell-input {
+      font-weight: 700;
+      color: var(--mint);
+      cursor: default;
+    }
+
+    .cell.invalid .cell-input {
+      color: #ef4444;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      padding: 7px 12px;
+      font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: var(--bg-subtle);
+      color: var(--text);
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform 0.08s ease-out;
     }
 
-    .hero-progress-bar {
-      position: relative;
-      width: 120px;
-      height: 3px;
-      border-radius: 999px;
-      background: var(--bg-subtle);
-      overflow: hidden;
-    }
-
-    .hero-progress-bar span {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 60%;
-      border-radius: inherit;
+    .btn-primary {
       background: linear-gradient(90deg, #6ee7b7, var(--mint));
+      border-color: rgba(16, 163, 127, 0.85);
+      color: #0f172a;
+      font-weight: 600;
     }
 
-    .quick-panels {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(16, 163, 127, 0.85);
     }
 
+    .status-message {
+      font-size: 12px;
+      color: var(--text-soft);
+      min-height: 16px;
+    }
+
+    /* Leaderboard */
     .card {
       background: var(--bg-elevated);
       border-radius: var(--radius-lg);
@@ -291,35 +411,36 @@
       font-weight: 600;
     }
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
     }
 
-    .pill-chip {
-      font-size: 11px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: var(--bg-subtle);
-      border: 1px solid rgba(148, 163, 184, 0.25);
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 4px 6px;
+      text-align: left;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .leaderboard-table th {
+      font-weight: 600;
       color: var(--text-soft);
     }
 
-    .pill-chip strong {
+    .leaderboard-table tr:nth-child(1) td:first-child {
+      font-weight: 700;
       color: var(--mint);
-      font-weight: 600;
     }
 
-    .placeholder-line {
-      height: 6px;
+    .badge-small {
+      padding: 2px 6px;
       border-radius: 999px;
-      background: linear-gradient(
-        90deg,
-        rgba(148, 163, 184, 0.4),
-        rgba(148, 163, 184, 0.12)
-      );
-      max-width: 160px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: var(--bg-subtle);
+      color: var(--text-soft);
     }
 
     footer {
@@ -332,6 +453,7 @@
       border-top: 1px dashed rgba(148, 163, 184, 0.25);
       padding-top: 10px;
       margin-top: 4px;
+      flex-wrap: wrap;
     }
 
     footer a {
@@ -352,16 +474,15 @@
     <div class="frame">
       <header>
         <div class="brand">
-          <div class="brand-logo">M</div>
+          <div class="brand-logo">S</div>
           <div>
-            <div class="brand-text-main">Mint Studio</div>
-            <div class="brand-text-sub">in-progress concept page</div>
+            <div class="brand-text-main">Mint Sudoku Extreme</div>
+            <div class="brand-text-sub">9×9 · single player · local leaderboard</div>
           </div>
         </div>
 
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Dark Mode umschalten">
           <div class="pill">
-            <!-- minimal sun/moon icon -->
             <svg class="theme-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M12 4.5a7.5 7.5 0 1 0 7.04 9.9A6.5 6.5 0 0 1 12 4.5z"
@@ -374,75 +495,92 @@
       </header>
 
       <main>
-        <section class="hero">
-          <div>
+        <section class="left">
+          <div class="hero">
             <div class="hero-label">
-              <span>WIP</span>
-              <span>mint interface</span>
+              <span>Extreme</span>
+              <span>Sudoku 9×9</span>
             </div>
-
             <h1 class="hero-title">
-              A calm, mint-tinted workspace<br />
-              that’s still in the making.
+              Konzentriere dich.<br />
+              Ein minimalistisches Sudoku ohne Ablenkung.
             </h1>
-
             <p class="hero-subtitle">
-              This is just a skeleton. Add sections, content blocks, and interactions as your
-              idea grows. The mint accent keeps everything clean and focused, while the
-              ChatGPT-style dark mode is ready to go.
+              Jedes Spiel wird zufällig erzeugt. Kein Schnickschnack – nur du, ein 9×9-Grid
+              und ein Timer. Löse es so schnell wie möglich, um deinen Namen in die
+              Bestenliste zu bringen.
             </p>
+            <div class="hero-meta">
+              <span class="hero-meta-pill">Schwierigkeit: <strong>Extreme</strong></span>
+              <span class="hero-meta-pill">Größe: <strong>9 × 9 × 1</strong></span>
+              <span class="hero-meta-pill">Modus: <strong>Singleplayer</strong></span>
+            </div>
           </div>
 
-          <div class="hero-footer">
-            <div class="hero-progress">
-              <span class="hero-dot"></span>
-              <span>Prototype status · 60%</span>
+          <div class="board-wrapper">
+            <div class="board-header">
+              <div class="status-pill">
+                <span class="status-dot"></span>
+                <span id="status-text">Spiel läuft · viel Erfolg!</span>
+              </div>
+              <div class="timer">Zeit: <span id="timer">00:00</span></div>
             </div>
 
-            <div class="hero-progress-bar">
-              <span></span>
+            <div class="board" id="board"></div>
+
+            <div class="controls">
+              <button class="btn btn-primary" id="btn-new">Neues Sudoku</button>
+              <button class="btn" id="btn-check">Prüfen</button>
+              <button class="btn" id="btn-solve">Aufgeben &amp; Lösung anzeigen</button>
+              <span class="badge-small">Tipp: Nur Ziffern 1–9, keine Buchstaben.</span>
             </div>
+
+            <div class="status-message" id="message"></div>
           </div>
         </section>
 
-        <section class="quick-panels">
+        <section class="right">
           <article class="card">
-            <div class="card-title">Next steps</div>
-            <div class="pill-row">
-              <span class="pill-chip"><strong>01</strong> · Navigation</span>
-              <span class="pill-chip"><strong>02</strong> · About section</span>
-              <span class="pill-chip"><strong>03</strong> · Project grid</span>
-              <span class="pill-chip"><strong>04</strong> · Contact form</span>
-            </div>
+            <div class="card-title">Bestenliste (lokal)</div>
+            <table class="leaderboard-table" id="leaderboard">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Zeit</th>
+                  <th>Datum</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="4">Noch keine Einträge – löse dein erstes Sudoku!</td>
+                </tr>
+              </tbody>
+            </table>
           </article>
 
           <article class="card">
-            <div class="card-title">In-progress blocks</div>
-            <div class="placeholder-line"></div>
-            <div class="placeholder-line" style="max-width: 120px;"></div>
-            <div class="placeholder-line" style="max-width: 80px;"></div>
-          </article>
-
-          <article class="card">
-            <div class="card-title">Theme &amp; tokens</div>
-            <div class="pill-row">
-              <span class="pill-chip">Accent · <strong>Mint</strong></span>
-              <span class="pill-chip">Corners · <strong>16px+</strong></span>
-              <span class="pill-chip">Shadow · <strong>Soft</strong></span>
-              <span class="pill-chip">Mode · <strong>Light/Dark</strong></span>
-            </div>
+            <div class="card-title">Regeln (Kurzfassung)</div>
+            <ul style="padding-left: 16px; color: var(--text-soft); font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
+              <li>Jede Zeile enthält die Zahlen 1–9 genau einmal.</li>
+              <li>Jede Spalte enthält die Zahlen 1–9 genau einmal.</li>
+              <li>Jeder 3×3-Block enthält die Zahlen 1–9 genau einmal.</li>
+              <li>Fixe Zahlen (mint) können nicht verändert werden.</li>
+              <li>Fehlerhafte Zellen werden rot markiert, wenn du auf „Prüfen“ klickst.</li>
+            </ul>
           </article>
         </section>
       </main>
 
       <footer>
-        <span>Designed as a minimal starter — customize freely.</span>
-        <span>Dark mode is synced with your preference.</span>
+        <span>Layout im Mint-Stil mit ChatGPT-ähnlichem Dark Mode.</span>
+        <span>Bestenliste wird nur in deinem Browser gespeichert.</span>
       </footer>
     </div>
   </div>
 
   <script>
+    // ---------- Dark Mode ----------
     (function () {
       const body = document.body;
       const toggle = document.getElementById("theme-toggle");
@@ -451,7 +589,7 @@
       const prefersDark = window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-      const stored = window.localStorage.getItem("mint-theme");
+      const stored = window.localStorage.getItem("mint-sudoku-theme");
 
       if (stored === "dark" || (!stored && prefersDark)) {
         body.classList.add("dark");
@@ -466,10 +604,339 @@
 
       toggle.addEventListener("click", () => {
         const isDark = body.classList.toggle("dark");
-        window.localStorage.setItem("mint-theme", isDark ? "dark" : "light");
+        window.localStorage.setItem("mint-sudoku-theme", isDark ? "dark" : "light");
         updateLabel();
       });
     })();
+
+    // ---------- Sudoku Logik ----------
+    const SIZE = 9;
+    const EMPTY = 0;
+
+    let solutionGrid = [];
+    let fixedGrid = [];
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let gameActive = false;
+
+    const boardEl = document.getElementById("board");
+    const messageEl = document.getElementById("message");
+    const statusTextEl = document.getElementById("status-text");
+    const timerEl = document.getElementById("timer");
+    const leaderboardEl = document.getElementById("leaderboard").querySelector("tbody");
+
+    function shuffle(array) {
+      const arr = array.slice();
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function generateFullGrid() {
+      const base = 3;
+      const side = base * base;
+
+      const pattern = (r, c) => (base * (r % base) + Math.floor(r / base) + c) % side;
+      const rows = shuffle([0,1,2]).flatMap(g => shuffle([0,1,2]).map(r => g * base + r));
+      const cols = shuffle([0,1,2]).flatMap(g => shuffle([0,1,2]).map(c => g * base + c));
+      const nums = shuffle([1,2,3,4,5,6,7,8,9]);
+
+      const grid = Array.from({ length: side }, () => Array(side).fill(0));
+      for (let r = 0; r < side; r++) {
+        for (let c = 0; c < side; c++) {
+          grid[r][c] = nums[pattern(rows[r], cols[c])];
+        }
+      }
+      return grid;
+    }
+
+    function createPuzzle(fullGrid, empties = 60) {
+      const grid = fullGrid.map(row => row.slice());
+      let cellsToRemove = Math.min(empties, SIZE * SIZE);
+
+      const indices = shuffle(
+        Array.from({ length: SIZE * SIZE }, (_, i) => i)
+      );
+
+      for (let i = 0; i < cellsToRemove; i++) {
+        const idx = indices[i];
+        const r = Math.floor(idx / SIZE);
+        const c = idx % SIZE;
+        grid[r][c] = EMPTY;
+      }
+
+      return grid;
+    }
+
+    function clearBoard() {
+      boardEl.innerHTML = "";
+    }
+
+    function renderBoard(puzzleGrid) {
+      clearBoard();
+      fixedGrid = puzzleGrid.map(row => row.slice());
+
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const value = puzzleGrid[r][c];
+
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          const isBottomBlock = (r + 1) % 3 === 0 && r !== SIZE - 1;
+          const isRightBlock = (c + 1) % 3 === 0 && c !== SIZE - 1;
+          if (isBottomBlock) cell.dataset.bottomBlock = "true";
+          if (isRightBlock) cell.dataset.rightBlock = "true";
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.inputMode = "numeric";
+          input.maxLength = 1;
+          input.className = "cell-input";
+          input.dataset.row = r;
+          input.dataset.col = c;
+
+          if (value !== EMPTY) {
+            input.value = value;
+            cell.classList.add("fixed");
+            input.readOnly = true;
+          }
+
+          input.addEventListener("input", (e) => {
+            const v = e.target.value.replace(/[^1-9]/g, "");
+            e.target.value = v;
+            cell.classList.remove("invalid");
+            messageEl.textContent = "";
+          });
+
+          input.addEventListener("focus", () => {
+            messageEl.textContent = "";
+          });
+
+          cell.appendChild(input);
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      secondsElapsed = 0;
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function updateTimerDisplay() {
+      const minutes = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+      const seconds = String(secondsElapsed % 60).padStart(2, "0");
+      timerEl.textContent = `${minutes}:${seconds}`;
+    }
+
+    function readCurrentBoard() {
+      const values = Array.from({ length: SIZE }, () => Array(SIZE).fill(EMPTY));
+      const inputs = boardEl.querySelectorAll(".cell-input");
+      inputs.forEach(input => {
+        const r = parseInt(input.dataset.row, 10);
+        const c = parseInt(input.dataset.col, 10);
+        const v = input.value ? parseInt(input.value, 10) : EMPTY;
+        if (!Number.isNaN(v)) {
+          values[r][c] = v;
+        }
+      });
+      return values;
+    }
+
+    function checkBoard(showErrors = true) {
+      const current = readCurrentBoard();
+      let hasError = false;
+      let incomplete = false;
+
+      const cells = boardEl.querySelectorAll(".cell");
+      cells.forEach(cell => cell.classList.remove("invalid"));
+
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          const val = current[r][c];
+          if (val === EMPTY) {
+            incomplete = true;
+            continue;
+          }
+          if (val !== solutionGrid[r][c]) {
+            hasError = true;
+            if (showErrors) {
+              const selector = `.cell-input[data-row="${r}"][data-col="${c}"]`;
+              const input = boardEl.querySelector(selector);
+              if (input) {
+                input.parentElement.classList.add("invalid");
+              }
+            }
+          }
+        }
+      }
+
+      if (hasError) {
+        messageEl.textContent = "Es gibt noch Fehler im Grid.";
+        return false;
+      }
+
+      if (incomplete) {
+        messageEl.textContent = "Sieht gut aus, aber das Sudoku ist noch nicht vollständig.";
+        return false;
+      }
+
+      // korrekt und vollständig
+      return true;
+    }
+
+    function showSolution() {
+      const inputs = boardEl.querySelectorAll(".cell-input");
+      inputs.forEach(input => {
+        const r = parseInt(input.dataset.row, 10);
+        const c = parseInt(input.dataset.col, 10);
+        input.value = solutionGrid[r][c];
+      });
+    }
+
+    // ---------- Leaderboard ----------
+    function loadLeaderboard() {
+      try {
+        const raw = window.localStorage.getItem("mint-sudoku-leaderboard");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed;
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLeaderboard(entries) {
+      window.localStorage.setItem("mint-sudoku-leaderboard", JSON.stringify(entries));
+    }
+
+    function formatTime(seconds) {
+      const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const secs = String(seconds % 60).padStart(2, "0");
+      return `${minutes}:${secs}`;
+    }
+
+    function renderLeaderboard() {
+      const entries = loadLeaderboard();
+      leaderboardEl.innerHTML = "";
+
+      if (entries.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 4;
+        td.textContent = "Noch keine Einträge – löse dein erstes Sudoku!";
+        tr.appendChild(td);
+        leaderboardEl.appendChild(tr);
+        return;
+      }
+
+      entries
+        .sort((a, b) => a.time - b.time)
+        .slice(0, 10)
+        .forEach((entry, index) => {
+          const tr = document.createElement("tr");
+          const rankTd = document.createElement("td");
+          rankTd.textContent = index + 1;
+
+          const nameTd = document.createElement("td");
+          nameTd.textContent = entry.name || "Gast";
+
+          const timeTd = document.createElement("td");
+          timeTd.textContent = formatTime(entry.time);
+
+          const dateTd = document.createElement("td");
+          dateTd.textContent = entry.date || "";
+
+          tr.appendChild(rankTd);
+          tr.appendChild(nameTd);
+          tr.appendChild(timeTd);
+          tr.appendChild(dateTd);
+          leaderboardEl.appendChild(tr);
+        });
+    }
+
+    function addToLeaderboard(seconds) {
+      const name = prompt("Glückwunsch! Trage deinen Namen für die Bestenliste ein:", "Gast") || "Gast";
+      const entries = loadLeaderboard();
+      const now = new Date();
+      const dateStr = now.toLocaleDateString();
+
+      entries.push({
+        name,
+        time: seconds,
+        date: dateStr
+      });
+
+      saveLeaderboard(entries);
+      renderLeaderboard();
+    }
+
+    // ---------- Game Setup ----------
+    function newGame() {
+      gameActive = true;
+      messageEl.textContent = "";
+      statusTextEl.textContent = "Spiel läuft · viel Erfolg!";
+      boardEl.querySelectorAll(".cell").forEach(c => c.classList.remove("invalid"));
+
+      solutionGrid = generateFullGrid();
+      const puzzle = createPuzzle(solutionGrid, 60); // viele leere Felder = „extreme“
+      renderBoard(puzzle);
+      startTimer();
+    }
+
+    // Buttons
+    document.getElementById("btn-new").addEventListener("click", () => {
+      newGame();
+    });
+
+    document.getElementById("btn-check").addEventListener("click", () => {
+      if (!gameActive) {
+        messageEl.textContent = "Starte zuerst ein neues Spiel.";
+        return;
+      }
+
+      const solved = checkBoard(true);
+      if (solved) {
+        gameActive = false;
+        stopTimer();
+        statusTextEl.textContent = "Gelöst! Trage dich in die Bestenliste ein.";
+        messageEl.textContent = "Perfekt! Du hast das Sudoku korrekt gelöst.";
+        addToLeaderboard(secondsElapsed);
+      }
+    });
+
+    document.getElementById("btn-solve").addEventListener("click", () => {
+      if (!gameActive) {
+        showSolution();
+        return;
+      }
+      const confirmGiveUp = confirm("Willst du wirklich aufgeben und die Lösung sehen?");
+      if (!confirmGiveUp) return;
+      gameActive = false;
+      stopTimer();
+      statusTextEl.textContent = "Lösung angezeigt · du kannst ein neues Spiel starten.";
+      showSolution();
+      messageEl.textContent = "Lösung eingeblendet. Versuch es beim nächsten Sudoku schneller!";
+    });
+
+    // Initial
+    renderLeaderboard();
+    newGame();
   </script>
 </body>
 </html>
