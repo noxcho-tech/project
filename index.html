@@ -2,35 +2,40 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Mint Sudoku Extreme 9x9</title>
+  <title>Mint Sudoku Extreme</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Inter von Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --mint: #10a37f;
-      --radius-lg: 16px;
+      --radius-lg: 14px;
       --radius-pill: 999px;
       --transition-fast: 0.18s ease-out;
 
       /* Light theme */
-      --bg: #f5faf9;
+      --bg: #f3f4f6;
       --bg-elevated: #ffffff;
-      --bg-subtle: #e9f5f1;
-      --text: #0f172a;
+      --bg-subtle: #e5f5f0;
+      --text: #111827;
       --text-soft: #6b7280;
-      --border-subtle: rgba(15, 23, 42, 0.06);
-      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.06);
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
     }
 
     body.dark {
-      /* Dark theme angelehnt an ChatGPT */
+      /* Dark theme ähnlich ChatGPT */
       --bg: #202123;
       --bg-elevated: #2b2c2f;
-      --bg-subtle: #18191c;
+      --bg-subtle: #1f2933;
       --text: #e5e7eb;
       --text-soft: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.16);
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.65);
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.7);
     }
 
     * {
@@ -40,58 +45,49 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Inter", sans-serif;
-      background: var(--bg);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top, rgba(16,163,127,0.18), transparent),
+                  var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 24px;
+      padding: 16px;
       transition:
         background-color var(--transition-fast),
         color var(--transition-fast);
     }
 
-    .shell {
+    .page {
       width: 100%;
-      max-width: 1100px;
-      background: linear-gradient(
-        135deg,
-        rgba(16, 163, 127, 0.12),
-        rgba(16, 163, 127, 0)
-      );
-      border-radius: 28px;
-      padding: 1px;
+      max-width: 1200px;
+      background: rgba(255,255,255,0.0);
     }
 
-    .frame {
-      background: var(--bg);
-      border-radius: 26px;
-      padding: 20px 18px;
+    /* Top Bar wie sudoku.com, nur cleaner */
+    .topbar {
+      background: var(--bg-elevated);
+      border-radius: 14px;
+      padding: 10px 14px;
       box-shadow: var(--shadow-soft);
       border: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      min-height: calc(100vh - 80px);
-    }
-
-    header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      margin-bottom: 12px;
     }
 
-    .brand {
+    .topbar-left {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
 
-    .brand-logo {
+    .logo {
       width: 32px;
       height: 32px;
       border-radius: 12px;
@@ -103,17 +99,50 @@
       color: white;
       font-size: 16px;
       box-shadow: 0 10px 25px rgba(16, 163, 127, 0.45);
+      flex-shrink: 0;
     }
 
-    .brand-text-main {
+    .logo-text-main {
       font-weight: 600;
-      letter-spacing: 0.01em;
-      font-size: 16px;
+      font-size: 15px;
     }
 
-    .brand-text-sub {
-      font-size: 12px;
+    .logo-text-sub {
+      font-size: 11px;
       color: var(--text-soft);
+    }
+
+    .topbar-center {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .difficulty-pill {
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: default;
+      user-select: none;
+    }
+
+    .difficulty-pill.active {
+      background: rgba(16,163,127,0.1);
+      color: var(--mint);
+      border-color: rgba(16,163,127,0.7);
+      font-weight: 600;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     /* Dark mode toggle */
@@ -126,7 +155,7 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-soft);
       position: relative;
       overflow: hidden;
@@ -173,195 +202,86 @@
       border-color: rgba(148, 163, 184, 0.6);
     }
 
-    main {
-      flex: 1;
+    /* Layout unter der Topbar: links Spiel, rechts Sidebar */
+    .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      gap: 18px;
-      margin-top: 6px;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+      gap: 16px;
+      margin-top: 10px;
     }
 
     @media (max-width: 900px) {
-      main {
+      .layout {
         grid-template-columns: minmax(0, 1fr);
       }
     }
 
-    .left {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .right {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .hero {
-      background: radial-gradient(circle at top left, rgba(16, 163, 127, 0.16), transparent),
-        var(--bg-elevated);
-      border-radius: var(--radius-lg);
-      padding: 18px 18px 14px;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .hero-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--mint);
-      background: rgba(16, 163, 127, 0.08);
-      border-radius: 999px;
-      padding: 3px 9px;
-      border: 1px dashed rgba(16, 163, 127, 0.4);
-    }
-
-    .hero-title {
-      font-size: clamp(22px, 3vw, 28px);
-      line-height: 1.15;
-      margin-top: 12px;
-      margin-bottom: 8px;
-    }
-
-    .hero-subtitle {
-      font-size: 13px;
-      color: var(--text-soft);
-    }
-
-    .hero-meta {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .hero-meta-pill {
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: var(--bg-subtle);
-    }
-
-    /* Sudoku Board */
-    .board-wrapper {
+    /* Game Area */
+    .game-card {
       background: var(--bg-elevated);
-      border-radius: var(--radius-lg);
+      border-radius: 16px;
+      padding: 14px 16px 14px;
       border: 1px solid var(--border-subtle);
-      padding: 14px;
+      box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .board-header {
+    .game-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
       font-size: 12px;
       color: var(--text-soft);
+      flex-wrap: wrap;
     }
 
-    .status-pill {
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .difficulty-label {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 4px 9px;
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
       background: var(--bg-subtle);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--mint);
-      box-shadow: 0 0 0 5px rgba(16, 163, 127, 0.2);
-    }
-
-    .timer {
-      font-variant-numeric: tabular-nums;
-      font-weight: 500;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      gap: 0;
-      border: 2px solid rgba(148, 163, 184, 0.6);
-      border-radius: 14px;
-      overflow: hidden;
-      background: var(--bg-elevated);
-    }
-
-    .cell {
-      width: 100%;
-      padding-bottom: 100%; /* square */
-      position: relative;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-    }
-
-    /* stärkere Linien für 3x3 Blöcke */
-    .cell[data-bottom-block="true"] {
-      border-bottom-width: 2px;
-    }
-    .cell[data-right-block="true"] {
-      border-right-width: 2px;
-    }
-
-    .cell-input {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: transparent;
-      text-align: center;
-      font-size: calc(1.2vw + 12px);
-      font-weight: 500;
-      color: var(--text);
-      outline: none;
-      caret-color: var(--mint);
-    }
-
-    @media (max-width: 900px) {
-      .cell-input {
-        font-size: 20px;
-      }
-    }
-
-    .cell-input:focus {
-      background: rgba(16, 163, 127, 0.1);
-    }
-
-    .cell.fixed .cell-input {
-      font-weight: 700;
+      border: 1px solid rgba(148, 163, 184, 0.3);
       color: var(--mint);
-      cursor: default;
+      font-weight: 500;
+      font-size: 11px;
     }
 
-    .cell.invalid .cell-input {
-      color: #ef4444;
+    .stat-chip {
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: transparent;
+      font-size: 11px;
+      color: var(--text-soft);
     }
 
-    .controls {
+    .stat-chip strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .toolbar-right {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
-      margin-top: 4px;
+      flex-wrap: wrap;
     }
 
     .btn {
       border-radius: var(--radius-pill);
-      padding: 7px 12px;
+      padding: 6px 11px;
       font-size: 12px;
       border: 1px solid rgba(148, 163, 184, 0.45);
       background: var(--bg-subtle);
@@ -388,25 +308,140 @@
       border-color: rgba(16, 163, 127, 0.85);
     }
 
-    .status-message {
+    .board-wrapper {
+      margin-top: 4px;
+      padding: 10px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top, rgba(148,163,184,0.15), transparent),
+                  #f9fafb;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    body.dark .board-wrapper {
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), transparent),
+                  #111827;
+      border-color: rgba(55, 65, 81, 0.9);
+    }
+
+    .board {
+      max-width: 480px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-elevated);
+      border: 2px solid rgba(55, 65, 81, 0.7);
+    }
+
+    .cell {
+      width: 100%;
+      padding-bottom: 100%; /* Quadrat */
+      position: relative;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(243,244,246,0.9);
+    }
+
+    body.dark .cell {
+      background: #111827;
+      border-color: rgba(55, 65, 81, 0.8);
+    }
+
+    .cell[data-bottom-block="true"] {
+      border-bottom-width: 2px;
+    }
+    .cell[data-right-block="true"] {
+      border-right-width: 2px;
+    }
+
+    .cell-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text);
+      outline: none;
+      caret-color: var(--mint);
+    }
+
+    .cell-input:focus {
+      background: rgba(16, 163, 127, 0.12);
+    }
+
+    .cell.fixed .cell-input {
+      font-weight: 700;
+      color: var(--mint);
+      cursor: default;
+    }
+
+    .cell.invalid .cell-input {
+      color: #ef4444;
+    }
+
+    .number-pad-wrapper {
+      margin-top: 10px;
+    }
+
+    .number-pad {
+      max-width: 480px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .num-key {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: var(--bg-elevated);
+      padding: 8px 0;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+      transition:
+        background-color var(--transition-fast),
+        transform 0.06s ease-out,
+        border-color var(--transition-fast);
+    }
+
+    .num-key:hover {
+      transform: translateY(-1px);
+      border-color: rgba(16, 163, 127, 0.85);
+    }
+
+    .num-key.clear-key {
       font-size: 12px;
       color: var(--text-soft);
+    }
+
+    .game-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-soft);
+      text-align: center;
       min-height: 16px;
     }
 
-    /* Leaderboard */
-    .card {
+    .sidebar-card {
       background: var(--bg-elevated);
-      border-radius: var(--radius-lg);
+      border-radius: 16px;
       padding: 12px 13px;
       border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
       font-size: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .card-title {
+    .sidebar-title {
       font-size: 12px;
       font-weight: 600;
     }
@@ -434,13 +469,13 @@
       color: var(--mint);
     }
 
-    .badge-small {
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      background: var(--bg-subtle);
+    .hint-list {
+      padding-left: 16px;
       color: var(--text-soft);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     footer {
@@ -450,9 +485,8 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      border-top: 1px dashed rgba(148, 163, 184, 0.25);
-      padding-top: 10px;
-      margin-top: 4px;
+      margin-top: 12px;
+      padding: 4px 2px;
       flex-wrap: wrap;
     }
 
@@ -470,17 +504,27 @@
   </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="frame">
-      <header>
-        <div class="brand">
-          <div class="brand-logo">S</div>
-          <div>
-            <div class="brand-text-main">Mint Sudoku Extreme</div>
-            <div class="brand-text-sub">9×9 · single player · local leaderboard</div>
-          </div>
+  <div class="page">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="logo">S</div>
+        <div>
+          <div class="logo-text-main">Mint Sudoku</div>
+          <div class="logo-text-sub">minimalistisches 9×9 · Extreme</div>
         </div>
+      </div>
 
+      <div class="topbar-center">
+        <span class="difficulty-pill">Leicht</span>
+        <span class="difficulty-pill">Mittel</span>
+        <span class="difficulty-pill">Schwer</span>
+        <span class="difficulty-pill">Experte</span>
+        <span class="difficulty-pill">Meister</span>
+        <span class="difficulty-pill active">Extrem</span>
+      </div>
+
+      <div class="topbar-right">
         <button class="theme-toggle" id="theme-toggle" aria-label="Dark Mode umschalten">
           <div class="pill">
             <svg class="theme-toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -492,91 +536,93 @@
           </div>
           <span id="theme-label">Dark</span>
         </button>
-      </header>
-
-      <main>
-        <section class="left">
-          <div class="hero">
-            <div class="hero-label">
-              <span>Extreme</span>
-              <span>Sudoku 9×9</span>
-            </div>
-            <h1 class="hero-title">
-              Konzentriere dich.<br />
-              Ein minimalistisches Sudoku ohne Ablenkung.
-            </h1>
-            <p class="hero-subtitle">
-              Jedes Spiel wird zufällig erzeugt. Kein Schnickschnack – nur du, ein 9×9-Grid
-              und ein Timer. Löse es so schnell wie möglich, um deinen Namen in die
-              Bestenliste zu bringen.
-            </p>
-            <div class="hero-meta">
-              <span class="hero-meta-pill">Schwierigkeit: <strong>Extreme</strong></span>
-              <span class="hero-meta-pill">Größe: <strong>9 × 9 × 1</strong></span>
-              <span class="hero-meta-pill">Modus: <strong>Singleplayer</strong></span>
-            </div>
-          </div>
-
-          <div class="board-wrapper">
-            <div class="board-header">
-              <div class="status-pill">
-                <span class="status-dot"></span>
-                <span id="status-text">Spiel läuft · viel Erfolg!</span>
-              </div>
-              <div class="timer">Zeit: <span id="timer">00:00</span></div>
-            </div>
-
-            <div class="board" id="board"></div>
-
-            <div class="controls">
-              <button class="btn btn-primary" id="btn-new">Neues Sudoku</button>
-              <button class="btn" id="btn-check">Prüfen</button>
-              <button class="btn" id="btn-solve">Aufgeben &amp; Lösung anzeigen</button>
-              <span class="badge-small">Tipp: Nur Ziffern 1–9, keine Buchstaben.</span>
-            </div>
-
-            <div class="status-message" id="message"></div>
-          </div>
-        </section>
-
-        <section class="right">
-          <article class="card">
-            <div class="card-title">Bestenliste (lokal)</div>
-            <table class="leaderboard-table" id="leaderboard">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Zeit</th>
-                  <th>Datum</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="4">Noch keine Einträge – löse dein erstes Sudoku!</td>
-                </tr>
-              </tbody>
-            </table>
-          </article>
-
-          <article class="card">
-            <div class="card-title">Regeln (Kurzfassung)</div>
-            <ul style="padding-left: 16px; color: var(--text-soft); font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
-              <li>Jede Zeile enthält die Zahlen 1–9 genau einmal.</li>
-              <li>Jede Spalte enthält die Zahlen 1–9 genau einmal.</li>
-              <li>Jeder 3×3-Block enthält die Zahlen 1–9 genau einmal.</li>
-              <li>Fixe Zahlen (mint) können nicht verändert werden.</li>
-              <li>Fehlerhafte Zellen werden rot markiert, wenn du auf „Prüfen“ klickst.</li>
-            </ul>
-          </article>
-        </section>
-      </main>
-
-      <footer>
-        <span>Layout im Mint-Stil mit ChatGPT-ähnlichem Dark Mode.</span>
-        <span>Bestenliste wird nur in deinem Browser gespeichert.</span>
-      </footer>
+      </div>
     </div>
+
+    <!-- HAUPTLAYOUT -->
+    <div class="layout">
+      <!-- SPIEL -->
+      <section class="game-card">
+        <div class="game-toolbar">
+          <div class="toolbar-left">
+            <div class="difficulty-label">
+              Extrem
+            </div>
+            <div class="stat-chip">
+              Zeit: <strong><span id="timer">00:00</span></strong>
+            </div>
+            <div class="stat-chip">
+              Fehler: <strong><span id="mistakes">0</span>/3</strong>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <button class="btn btn-primary" id="btn-new">Neues Spiel</button>
+            <button class="btn" id="btn-check">Prüfen</button>
+            <button class="btn" id="btn-solve">Aufgeben</button>
+          </div>
+        </div>
+
+        <div class="board-wrapper">
+          <div class="board" id="board"></div>
+        </div>
+
+        <div class="number-pad-wrapper">
+          <div class="number-pad">
+            <div class="num-key" data-num="1">1</div>
+            <div class="num-key" data-num="2">2</div>
+            <div class="num-key" data-num="3">3</div>
+            <div class="num-key" data-num="4">4</div>
+            <div class="num-key" data-num="5">5</div>
+            <div class="num-key" data-num="6">6</div>
+            <div class="num-key" data-num="7">7</div>
+            <div class="num-key" data-num="8">8</div>
+            <div class="num-key" data-num="9">9</div>
+            <div class="num-key clear-key" data-clear="true">Löschen</div>
+          </div>
+        </div>
+
+        <div class="game-message" id="message"></div>
+      </section>
+
+      <!-- SIDEBAR -->
+      <section style="display:flex; flex-direction:column; gap:12px;">
+        <article class="sidebar-card">
+          <div class="sidebar-title">Bestenliste (lokal)</div>
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Zeit</th>
+                <th>Datum</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard">
+              <tr>
+                <td colspan="4">Noch keine Einträge – löse dein erstes Sudoku!</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="sidebar-card">
+          <div class="sidebar-title">So spielst du</div>
+          <ul class="hint-list">
+            <li>Klicke eine Zelle im 9×9-Grid an.</li>
+            <li>Wähle unten eine Zahl 1–9.</li>
+            <li>Jede Zeile, Spalte und jeder 3×3-Block enthält die Zahlen 1–9 genau einmal.</li>
+            <li>„Prüfen“ markiert falsche Zellen rot und zählt einen Fehler.</li>
+            <li>Bei 3 Fehlern ist das Spiel verloren.</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+
+    <footer>
+      <span>Optik inspiriert von sudoku.com, aber bewusst minimalistisch im Mint-Stil.</span>
+      <span>Dark Mode angelehnt an ChatGPT · Bestenliste nur lokal gespeichert.</span>
+    </footer>
   </div>
 
   <script>
@@ -612,18 +658,21 @@
     // ---------- Sudoku Logik ----------
     const SIZE = 9;
     const EMPTY = 0;
+    const MAX_MISTAKES = 3;
 
     let solutionGrid = [];
     let fixedGrid = [];
     let timerInterval = null;
     let secondsElapsed = 0;
     let gameActive = false;
+    let mistakes = 0;
+    let activeInput = null;
 
     const boardEl = document.getElementById("board");
     const messageEl = document.getElementById("message");
-    const statusTextEl = document.getElementById("status-text");
     const timerEl = document.getElementById("timer");
-    const leaderboardEl = document.getElementById("leaderboard").querySelector("tbody");
+    const mistakesEl = document.getElementById("mistakes");
+    const leaderboardBody = document.getElementById("leaderboard");
 
     function shuffle(array) {
       const arr = array.slice();
@@ -654,10 +703,11 @@
 
     function createPuzzle(fullGrid, empties = 60) {
       const grid = fullGrid.map(row => row.slice());
-      let cellsToRemove = Math.min(empties, SIZE * SIZE);
+      const totalCells = SIZE * SIZE;
+      const cellsToRemove = Math.min(empties, totalCells);
 
       const indices = shuffle(
-        Array.from({ length: SIZE * SIZE }, (_, i) => i)
+        Array.from({ length: totalCells }, (_, i) => i)
       );
 
       for (let i = 0; i < cellsToRemove; i++) {
@@ -684,6 +734,7 @@
 
           const cell = document.createElement("div");
           cell.className = "cell";
+
           const isBottomBlock = (r + 1) % 3 === 0 && r !== SIZE - 1;
           const isRightBlock = (c + 1) % 3 === 0 && c !== SIZE - 1;
           if (isBottomBlock) cell.dataset.bottomBlock = "true";
@@ -703,14 +754,16 @@
             input.readOnly = true;
           }
 
+          input.addEventListener("focus", () => {
+            activeInput = input;
+            messageEl.textContent = "";
+            cell.classList.remove("invalid");
+          });
+
           input.addEventListener("input", (e) => {
             const v = e.target.value.replace(/[^1-9]/g, "");
             e.target.value = v;
             cell.classList.remove("invalid");
-            messageEl.textContent = "";
-          });
-
-          input.addEventListener("focus", () => {
             messageEl.textContent = "";
           });
 
@@ -741,6 +794,10 @@
       const minutes = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
       const seconds = String(secondsElapsed % 60).padStart(2, "0");
       timerEl.textContent = `${minutes}:${seconds}`;
+    }
+
+    function updateMistakesDisplay() {
+      mistakesEl.textContent = mistakes;
     }
 
     function readCurrentBoard() {
@@ -786,16 +843,24 @@
       }
 
       if (hasError) {
-        messageEl.textContent = "Es gibt noch Fehler im Grid.";
+        mistakes = Math.min(mistakes + 1, MAX_MISTAKES);
+        updateMistakesDisplay();
+        if (mistakes >= MAX_MISTAKES) {
+          gameActive = false;
+          stopTimer();
+          messageEl.textContent = "Du hast 3 Fehler gemacht – Spiel verloren. Auf „Aufgeben“ klicken, um die Lösung zu sehen.";
+        } else {
+          messageEl.textContent = "Es gibt noch Fehler im Grid.";
+        }
         return false;
       }
 
       if (incomplete) {
-        messageEl.textContent = "Sieht gut aus, aber das Sudoku ist noch nicht vollständig.";
+        messageEl.textContent = "Bis jetzt korrekt, aber noch nicht vollständig.";
         return false;
       }
 
-      // korrekt und vollständig
+      // korrekt & vollständig
       return true;
     }
 
@@ -833,7 +898,7 @@
 
     function renderLeaderboard() {
       const entries = loadLeaderboard();
-      leaderboardEl.innerHTML = "";
+      leaderboardBody.innerHTML = "";
 
       if (entries.length === 0) {
         const tr = document.createElement("tr");
@@ -841,7 +906,7 @@
         td.colSpan = 4;
         td.textContent = "Noch keine Einträge – löse dein erstes Sudoku!";
         tr.appendChild(td);
-        leaderboardEl.appendChild(tr);
+        leaderboardBody.appendChild(tr);
         return;
       }
 
@@ -866,7 +931,7 @@
           tr.appendChild(nameTd);
           tr.appendChild(timeTd);
           tr.appendChild(dateTd);
-          leaderboardEl.appendChild(tr);
+          leaderboardBody.appendChild(tr);
         });
     }
 
@@ -890,14 +955,45 @@
     function newGame() {
       gameActive = true;
       messageEl.textContent = "";
-      statusTextEl.textContent = "Spiel läuft · viel Erfolg!";
-      boardEl.querySelectorAll(".cell").forEach(c => c.classList.remove("invalid"));
+      mistakes = 0;
+      updateMistakesDisplay();
+      activeInput = null;
 
       solutionGrid = generateFullGrid();
       const puzzle = createPuzzle(solutionGrid, 60); // viele leere Felder = „extreme“
       renderBoard(puzzle);
       startTimer();
     }
+
+    // Nummern-Pad
+    document.querySelectorAll(".num-key").forEach(key => {
+      key.addEventListener("click", () => {
+        if (!gameActive) {
+          messageEl.textContent = "Starte zuerst ein neues Spiel.";
+          return;
+        }
+        if (!activeInput) {
+          messageEl.textContent = "Wähle zuerst eine Zelle aus.";
+          return;
+        }
+        if (activeInput.readOnly) {
+          messageEl.textContent = "Diese Zelle ist vorgegeben und kann nicht geändert werden.";
+          return;
+        }
+
+        const cell = activeInput.parentElement;
+        cell.classList.remove("invalid");
+
+        if (key.dataset.clear) {
+          activeInput.value = "";
+          return;
+        }
+
+        const num = key.dataset.num;
+        activeInput.value = num;
+        messageEl.textContent = "";
+      });
+    });
 
     // Buttons
     document.getElementById("btn-new").addEventListener("click", () => {
@@ -906,7 +1002,7 @@
 
     document.getElementById("btn-check").addEventListener("click", () => {
       if (!gameActive) {
-        messageEl.textContent = "Starte zuerst ein neues Spiel.";
+        messageEl.textContent = "Kein aktives Spiel – starte ein neues Sudoku.";
         return;
       }
 
@@ -914,24 +1010,20 @@
       if (solved) {
         gameActive = false;
         stopTimer();
-        statusTextEl.textContent = "Gelöst! Trage dich in die Bestenliste ein.";
-        messageEl.textContent = "Perfekt! Du hast das Sudoku korrekt gelöst.";
+        messageEl.textContent = "Perfekt! Du hast das Sudoku gelöst.";
         addToLeaderboard(secondsElapsed);
       }
     });
 
     document.getElementById("btn-solve").addEventListener("click", () => {
-      if (!gameActive) {
-        showSolution();
-        return;
-      }
+      if (!solutionGrid.length) return;
       const confirmGiveUp = confirm("Willst du wirklich aufgeben und die Lösung sehen?");
       if (!confirmGiveUp) return;
+
       gameActive = false;
       stopTimer();
-      statusTextEl.textContent = "Lösung angezeigt · du kannst ein neues Spiel starten.";
       showSolution();
-      messageEl.textContent = "Lösung eingeblendet. Versuch es beim nächsten Sudoku schneller!";
+      messageEl.textContent = "Lösung eingeblendet. Versuche beim nächsten Mal, es selbst zu lösen!";
     });
 
     // Initial
